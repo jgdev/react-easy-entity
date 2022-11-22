@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "debug": "^4.3.4",
     "esbuild": "^0.15.14",
     "socket.io": "^4.5.3",
     "watcher": "^2.1.0"

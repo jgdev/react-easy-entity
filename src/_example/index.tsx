@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import App from "./App";
+import debug from "debug";
 
-import { Table } from "../index.mjs";
+localStorage.setItem("debug", window.process.env.DEBUG || "");
 
-const App = () => (
-  <>
-    <h1>Example test3</h1>
-    <Table />
-  </>
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
 );
-
-ReactDOM.render(<App />, document.getElementById("root"));

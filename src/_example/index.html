@@ -22,8 +22,14 @@
   <script type="text/javascript">
     const socket = io()
     socket.on('reload', () => {
+      console.clear()
       window.location.reload()
     })
+    window.process = {
+      env: {
+        DEBUG: '*'
+      }
+    }
   </script>
   %script%
 </body>
