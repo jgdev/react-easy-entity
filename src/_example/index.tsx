@@ -5,7 +5,7 @@ import { Table } from "../index.mjs";
 
 const App = () => (
   <>
-    <h1>Example</h1>
+    <h1>Example test3</h1>
     <Table />
   </>
 );

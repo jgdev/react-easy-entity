@@ -18,6 +18,13 @@
 
 <body>
   <div id="root" />
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+    const socket = io()
+    socket.on('reload', () => {
+      window.location.reload()
+    })
+  </script>
   %script%
 </body>
 

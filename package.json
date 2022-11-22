@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./esbuild.js",
-    "build:example": "pnpm build; esbuild example/src/index.tsx --target=es2020,chrome58,edge16,firefox57,node12,safari11 --outdir=example/dist"
+    "build": "node ./esbuild.mjs",
+    "start": "pnpm build --dev"
   },
   "keywords": [],
   "author": "",
@@ -14,11 +14,15 @@
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
-    "esbuild": "^0.15.14"
+    "esbuild": "^0.15.14",
+    "socket.io": "^4.5.3",
+    "watcher": "^2.1.0"
   },
   "dependencies": {
+    "finalhandler": "^1.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "serve-static": "^1.15.0"
   },
   "main": "lib/index.js",
   "module": "lib/index.js",
