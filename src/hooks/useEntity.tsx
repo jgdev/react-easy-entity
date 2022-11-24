@@ -1,26 +1,58 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useEntityManagerContext } from "./useEntityManagerContext";
 import Table from "../components/Table/index.mjs";
 import { EntityOptions } from "../index.mjs";
 
+import debug from "debug";
+
+// export type ÷
+
+const log = debug("hook:useEntity");
+
 export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
-  const { registerEntity, entities, getEntity } = useEntityManagerContext();
-  const entity = getEntity(entityOptions.name);
+  const { registerEntity, getEntity, getEntityRowById } =
+    useEntityManagerContext();
+  const entityManager = getEntity(entityOptions.name);
+  const [state, setState] = useState({
+    modalOpen: false,
+    entity: null,
+  });
 
   useEffect(() => {
     registerEntity(entityOptions);
+    log(`registering entity ${entityOptions.name}`);
   }, []);
 
   const Container = (props) =>
-    (entity && <div id="entity-container" {...props} />) || <></>;
+    (entityManager && <div id="entity-container" {...props} />) || <></>;
   const mTable = () =>
-    (entity && <Table rows={entity.data} fields={entity.fields} />) || <></>;
-  const Filters = () => (entity && <div id="filters" />) || <></>;
-  const Pagination = () => (entity && <div id="pagination" />) || <></>;
-  const Modal = () => (entity && <div id="modal" />) || <></>;
+    (entityManager && (
+      <Table
+        rows={entityManager.data}
+        fields={entityManager.fields}
+        {...entityManager.table}
+      />
+    )) || <></>;
+  const Filters = () => (entityManager && <div id="filters" />) || <></>;
+  const Pagination = () => (entityManager && <div id="pagination" />) || <></>;
+  const Modal = () => (entityManager && <div id="modal" />) || <></>;
+
+  log("rendering");
 
   return {
-    Components: {
+    actions: {
+      createEntity: () => setState({ modalOpen: true, entity: null }),
+      editEntity: ({ id, preFetch = false }) => {
+        const entityById = getEntityRowById(entityOptions.name, id);
+        setState({
+          modalOpen: true,
+          entity:
+            ((preFetch || !entityById) && entityOptions.api.findOne!(id)) ||
+            entityById,
+        });
+      },
+    },
+    components: {
       Container,
       Table: mTable,
       Filters,

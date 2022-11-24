@@ -14,6 +14,7 @@ export type Context = {
   entities: EntityObject[];
   registerEntity: (options: EntityOptions<any>) => void;
   getEntity: (entityName: string) => EntityObject | undefined;
+  getEntityRowById: (entityName: string, id: string) => any;
 };
 
 export const EntityContext = createContext<Context>({} as any);
@@ -25,6 +26,15 @@ export const withEntityContext =
   (Component: React.FunctionComponent) => {
     return ({ children, ...props }: any) => {
       const [entities, setEntities] = useState<EntityObject[]>([]);
+
+      useEffect(() => {
+        const initialLoadEntities = entities.filter(
+          (entity) => !entity.initialLoad && !entity.ready
+        );
+        initialLoadEntities.forEach((entity) => {
+          entity.api.findAll && entity.api.findAll();
+        });
+      }, [Object.keys(entities).length]);
 
       const getEntity = (name: string) =>
         entities.find((entity) => entity.name === name);
@@ -50,7 +60,7 @@ export const withEntityContext =
                   log(`finished ${entity.name}.api.${method}`);
 
                   switch (method) {
-                    case "list":
+                    case "findAll":
                       setEntities((state) => {
                         const index = state.findIndex(
                           (e) => e.name === entity.name
@@ -83,15 +93,6 @@ export const withEntityContext =
           })
         );
       };
-
-      useEffect(() => {
-        const initialLoadEntities = entities.filter(
-          (entity) => !entity.initialLoad && !entity.ready
-        );
-        initialLoadEntities.forEach((entity) => {
-          entity.api.list && entity.api.list();
-        });
-      }, [Object.keys(entities).length]);
 
       log("rendering");
 

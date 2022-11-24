@@ -1,38 +1,52 @@
 import React from "react";
-import { EntityField } from "../../index.mjs";
+import { EntityField, EntityTableProps } from "../../index.mjs";
 
-export type Props = {
+export type Props = EntityTableProps & {
   rows: any[];
   fields: EntityField<any>[];
 };
 
-export const Table = (props: Props) => {
-  const { columns, rows } = props.fields.reduce(
-    (result, current) => {
-      return {
-        columns: [...result.columns, current],
-        rows: [],
+export const Table = ({
+  tableRowProps,
+  tableHeaderProps,
+  onRowClick = () => {},
+  fields,
+  rows,
+  ...props
+}: Props) => {
+  const renderHead = () =>
+    fields.map((field) => (
+      <th {...tableHeaderProps} key={field.property}>
+        {field.label}
+      </th>
+    ));
+  const renderRows = () => {
+    return rows.map((entity: any) => {
+      const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+        if (tableRowProps?.onClick) tableRowProps.onClick(e);
+        if (e.isDefaultPrevented() || e.isPropagationStopped()) return;
+        onRowClick(entity, e);
       };
-    },
-    {
-      columns: [] as EntityField<any>[],
-      rows: [],
-    }
-  );
-  return (
-    <table>
-      <thead>
-        <tr>
-          {columns.map((field) => (
-            <th key={field.property}>{field.label}</th>
-          ))}
+      return (
+        <tr {...tableRowProps} key={entity.id} onClick={handleClick}>
+          {fields.map((field) => {
+            return (
+              <td key={`${entity.id}-${field.property}`}>
+                {(field.render && field.render(entity)) ||
+                  entity[field.property]}
+              </td>
+            );
+          })}
         </tr>
+      );
+    });
+  };
+  return (
+    <table {...props}>
+      <thead>
+        <tr>{renderHead()}</tr>
       </thead>
-      <tbody>
-        {props.rows.map(() => (
-          <tr></tr>
-        ))}
-      </tbody>
+      <tbody>{renderRows()}</tbody>
     </table>
   );
 };

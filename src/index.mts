@@ -1,3 +1,5 @@
+import React from "react";
+
 export type EntityField<T> = {
   label?: string;
   type: FieldType;
@@ -9,14 +11,24 @@ export type EntityField<T> = {
   defaultValue?: any;
 };
 
+export type EntityTableProps = React.HTMLAttributes<HTMLTableElement> & {
+  onRowClick?: (
+    entity: any,
+    event?: React.MouseEvent<HTMLTableRowElement>
+  ) => void;
+  tableRowProps?: React.HTMLAttributes<HTMLTableRowElement>;
+  tableHeaderProps?: React.HTMLAttributes<HTMLTableHeaderCellElement>;
+};
+
 export type EntityOptions<T> = {
   name: string;
   fields: EntityField<T>[];
+  table?: EntityTableProps;
   api: Partial<{
     create: (data: any) => Promise<T>;
     update: (id: any, data: any) => Promise<T>;
     del: (id: any) => Promise<void>;
-    list: () => Promise<T[]>;
+    findAll: () => Promise<T[]>;
     findOne: (id: any) => Promise<T>;
   }>;
   onError?: (error: any, type?: string) => void;
