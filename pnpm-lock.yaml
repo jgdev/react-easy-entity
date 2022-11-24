@@ -12,6 +12,7 @@ specifiers:
   react-dom: ^18.2.0
   serve-static: ^1.15.0
   socket.io: ^4.5.3
+  uuid: ^9.0.0
   watcher: ^2.1.0
 
 dependencies:
@@ -19,6 +20,7 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   serve-static: 1.15.0
+  uuid: 9.0.0
 
 devDependencies:
   '@types/debug': 4.1.7
@@ -638,6 +640,11 @@ packages:
   /unpipe/1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
     dev: false
 
   /vary/1.1.2:

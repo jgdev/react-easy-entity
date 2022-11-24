@@ -12,9 +12,9 @@ export type EntityField<T> = {
 export type EntityOptions<T> = {
   name: string;
   fields: EntityField<T>[];
-  api?: Partial<{
-    create: () => Promise<T | any>;
-    update: (id: any, data: any) => Promise<T | any>;
+  api: Partial<{
+    create: (data: any) => Promise<T>;
+    update: (id: any, data: any) => Promise<T>;
     del: (id: any) => Promise<void>;
     list: () => Promise<T[]>;
     findOne: (id: any) => Promise<T>;

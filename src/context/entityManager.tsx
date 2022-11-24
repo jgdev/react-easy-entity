@@ -1,20 +1,19 @@
 import React, { createContext, useState } from "react";
+import useMap from "../hooks/useMap";
 import { EntityOptions } from "../index.mjs";
 import debug from "debug";
 import { useEffect } from "react";
 
-export type EntityObject = {
+export type EntityObject = EntityOptions<any> & {
   data: any[];
-  options: EntityOptions<any>;
   ready?: boolean;
   initialLoad?: boolean;
 };
 
 export type Context = {
-  entities: {
-    [key: string]: EntityObject;
-  };
-  dispatchEntity: (options: EntityOptions<any>) => void;
+  entities: EntityObject[];
+  registerEntity: (options: EntityOptions<any>) => void;
+  getEntity: (entityName: string) => EntityObject | undefined;
 };
 
 export const EntityContext = createContext<Context>({} as any);
@@ -25,77 +24,84 @@ export const withEntityContext =
   (value: Partial<Context> = {}) =>
   (Component: React.FunctionComponent) => {
     return ({ children, ...props }: any) => {
-      const [entities, setEntities] = useState<{
-        [key: string]: EntityObject;
-      }>({});
+      const [entities, setEntities] = useState<EntityObject[]>([]);
 
-      const handleError = (entityName: string, type: string, error: any) => {
-        log(`error ${entityName}.api.${type}: ${error.message || error}`);
-        const callback = entities[entityName]?.options?.onError;
-        callback && callback(error, type);
+      const getEntity = (name: string) =>
+        entities.find((entity) => entity.name === name);
+
+      const handleError = (
+        entity: EntityOptions<any>,
+        methodType: string,
+        error: any
+      ) => {
+        log(`method ${entity.name}.${methodType} error: ${error.message}`);
+        entity.onError && entity.onError(error, methodType);
       };
 
-      const wrapApiLogger = (
-        api: { [key: string]: (...args: any[]) => Promise<any> },
-        name: string
-      ) => {
-        return Object.keys(api).reduce((result, key) => {
+      const wrapApiMethods = (entity: EntityOptions<any>) => {
+        return Object.keys(entity.api).reduce((result, method) => {
           return {
             ...result,
-            [key]: async (...args) => {
-              log(`calling ${name}.api.${key}`);
-              return api[key](...args)
-                .then((result) => {
-                  log(`finished ${name}.api.${key}`);
+            [method]: async (...args: any[]) => {
+              log(`calling ${entity.name}.api.${method}`);
+
+              return entity.api[method](...args)
+                .then((result: any) => {
+                  log(`finished ${entity.name}.api.${method}`);
+
+                  switch (method) {
+                    case "list":
+                      setEntities((state) => {
+                        const index = state.findIndex(
+                          (e) => e.name === entity.name
+                        );
+                        const newState = [...state];
+                        newState[index].data = result;
+                        return newState;
+                      });
+                      break;
+                  }
+
                   return result;
                 })
-                .catch((err) => {
-                  handleError(name, key, err);
+                .catch((err: any) => {
+                  handleError(entity, method, err);
                 });
             },
           };
         }, {} as any);
       };
 
-      const dispatchEntity = (options: EntityOptions<any>) => {
-        log(`creating entity manager for ${options.name}`);
-
-        if (!entities[options.name]) {
-          const entity: EntityObject = {
+      const registerEntity = (options: EntityOptions<any>) => {
+        setEntities((prevEntities) =>
+          prevEntities.concat({
+            ...options,
             data: [],
-            options: {
-              ...options,
-              api: wrapApiLogger(options.api || {}, options.name),
-            },
+            initialLoad: false,
             ready: false,
-            initialLoad: true,
-          };
-          setEntities((_entities) => ({
-            ..._entities,
-            [options.name]: entity,
-          }));
-        }
+            api: wrapApiMethods(options),
+          })
+        );
       };
 
-      log("rendering");
-
       useEffect(() => {
-        Object.keys(entities)
-          .filter(
-            (entity) => !entities[entity].ready && entities[entity].initialLoad
-          )
-          .forEach((entity) => {
-            const e = entities[entity];
-            e.options.api?.list && e.options.api.list().finally(() => {});
-          });
+        const initialLoadEntities = entities.filter(
+          (entity) => !entity.initialLoad && !entity.ready
+        );
+        initialLoadEntities.forEach((entity) => {
+          entity.api.list && entity.api.list();
+        });
       }, [Object.keys(entities).length]);
+
+      log("rendering");
 
       return (
         <EntityContext.Provider
           value={{
             ...value,
             entities,
-            dispatchEntity,
+            getEntity,
+            registerEntity,
           }}
         >
           <Component {...props} />
