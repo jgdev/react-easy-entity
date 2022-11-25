@@ -1,5 +1,5 @@
 import React from "react";
-import { EntityField, EntityTableProps } from "../../index.mjs";
+import { EntityField, EntityTableProps } from "../../";
 
 export type Props = EntityTableProps & {
   rows: any[];

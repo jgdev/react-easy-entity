@@ -42,5 +42,7 @@ export enum FieldType {
   String,
 }
 
-export { default as Table } from "./components/Table/index.mjs";
-export { default as TableRow } from "./components/TableRow/index.mjs";
+export { default as Table } from "./components/Table";
+export { default as TableRow } from "./components/TableRow";
+export { useEntity } from "./hooks/useEntity";
+export { withEntityContext } from "./context/entityManager";

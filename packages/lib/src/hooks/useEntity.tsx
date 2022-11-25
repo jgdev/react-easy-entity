@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useEntityManagerContext } from "./useEntityManagerContext";
-import Table from "../components/Table/index.mjs";
-import { EntityOptions } from "../index.mjs";
+import Table from "../components/Table";
+import { EntityOptions } from "../";
 
 import debug from "debug";
 

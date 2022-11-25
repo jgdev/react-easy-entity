@@ -1,8 +1,8 @@
 import React, { createContext, useState } from "react";
-import useMap from "../hooks/useMap";
-import { EntityOptions } from "../index.mjs";
-import debug from "debug";
 import { useEffect } from "react";
+import debug from "debug";
+
+import { EntityOptions } from "../";
 
 export type EntityObject = EntityOptions<any> & {
   data: any[];
@@ -38,6 +38,9 @@ export const withEntityContext =
 
       const getEntity = (name: string) =>
         entities.find((entity) => entity.name === name);
+
+      const getEntityRowById = (name: string, id: string) =>
+        getEntity(name)?.data.find((row) => row.id === id);
 
       const handleError = (
         entity: EntityOptions<any>,
@@ -102,6 +105,7 @@ export const withEntityContext =
             ...value,
             entities,
             getEntity,
+            getEntityRowById,
             registerEntity,
           }}
         >

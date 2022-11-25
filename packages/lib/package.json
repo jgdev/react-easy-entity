@@ -1,0 +1,20 @@
+{
+  "name": "react-entity",
+  "version": "0.0.1",
+  "author": "Joan Peralta <joanperalta13@gmail.com>",
+  "license": "ISC",
+  "scripts": {
+    "build": "node ./esbuild.mjs && tsc --emitDeclarationOnly --outDir dist"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.14"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.9.3"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts"
+}
