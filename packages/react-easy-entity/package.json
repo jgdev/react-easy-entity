@@ -1,18 +1,24 @@
 {
-  "name": "react-entity",
+  "name": "react-easy-entity",
   "version": "0.0.1",
   "author": "Joan Peralta <joanperalta13@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "build": "node ./esbuild.mjs && tsc --emitDeclarationOnly --outDir dist"
+    "build": "node ./esbuild.mjs",
+    "start": "WATCH=1 pnpm build --watch",
+    "postinstall": "pnpm build"
   },
   "devDependencies": {
     "esbuild": "^0.15.14"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "typescript": "^4.9.3"
+  },
+  "peerDependencies": {
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",

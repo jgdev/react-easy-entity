@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { useEntity, withEntityContext } from "react-entity";
+import { useEntity } from "react-easy-entity";
 
 function App() {
   const userEntity = useEntity({
@@ -30,4 +30,5 @@ function App() {
   );
 }
 
-export default withEntityContext()(App);
+export default App;
+// export default withEntityContext()(App);

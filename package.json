@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./esbuild.mjs",
-    "start": "pnpm build --dev"
+    "start": "pnpm --parallel start"
   },
   "keywords": [],
   "author": "",
@@ -16,15 +14,11 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "debug": "^4.3.4",
-    "esbuild": "^0.15.14",
-    "socket.io": "^4.5.3",
-    "watcher": "^2.1.0"
+    "esbuild": "^0.15.14"
   },
   "dependencies": {
-    "finalhandler": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "serve-static": "^1.15.0",
     "uuid": "^9.0.0"
   },
   "main": "lib/index.js",

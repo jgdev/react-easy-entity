@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useEntityManagerContext } from "./useEntityManagerContext";
 import Table from "../components/Table";
 import { EntityOptions } from "../";
+import { EntityContext } from "../context/entityManager";
 
 import debug from "debug";
-
-// export type ÷
 
 const log = debug("hook:useEntity");
 
 export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
+  console.log(EntityContext, useContext);
+  const context = useContext(EntityContext);
   const { registerEntity, getEntity, getEntityRowById } =
     useEntityManagerContext();
   const entityManager = getEntity(entityOptions.name);

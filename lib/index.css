@@ -1,0 +1,27 @@
+.avatar-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.customTable {
+  margin: 1rem;
+  border-collapse:collapse;
+  text-align: left;
+}
+
+.customTable td, .customTable th {
+  padding: 1rem;
+}
+
+.customTable tbody tr:hover {
+  background: #c9c9c9;
+}
+
+/* .customTable tr, td {
+  cursor: pointer;
+} */
+
+.button-actions button {
+  margin: 0.5rem;
+}
