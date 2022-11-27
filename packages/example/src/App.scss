@@ -3,8 +3,10 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 20vmin;
   pointer-events: none;
+  user-select: none;
+  margin-bottom: 2rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -34,5 +36,26 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+#entity-container {
+  background: rgba(0, 0, 0, .5);
+  text-align: left;
+  padding: 1rem;
+}
+
+table {
+  margin-top: 1rem;
+  font-size: 1rem;
+  border-style: none;
+  border-spacing: 0;
+
+  td, th {
+    padding-right: 1.5rem;
+    padding: .5rem;
+  }
+  tbody tr:hover {
+    background-color: rgba(255, 255, 255, .2)
   }
 }

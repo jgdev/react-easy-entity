@@ -23,6 +23,7 @@ export type EntityTableProps = React.HTMLAttributes<HTMLTableElement> & {
 export type EntityOptions<T> = {
   name: string;
   fields: EntityField<T>[];
+  filters?: any;
   table?: EntityTableProps;
   api: Partial<{
     create: (data: any) => Promise<T>;
@@ -40,6 +41,12 @@ export enum FieldType {
   Email,
   Number,
   String,
+}
+
+export enum FilterType {
+  Search,
+  Select,
+  Custom,
 }
 
 export { default as Table } from "./components/Table";

@@ -1,34 +1,68 @@
-import React from "react";
+import { useEntity, withEntityContext, FieldType } from "react-easy-entity";
+
+import { getDatabase } from "./database";
 import logo from "./logo.svg";
-import "./App.css";
-import { useEntity } from "react-easy-entity";
+import "./App.scss";
+
+const userDatabase = getDatabase("user");
+
+userDatabase.list().then((data) => {
+  if (!data.length) {
+    userDatabase.create({
+      fullName: "Joan Peralta",
+      email: "joanperalta13@gmail.com",
+      age: 26,
+      profileImageUrl: "https://avatars.githubusercontent.com/u/3039328",
+    });
+    userDatabase.create({
+      fullName: "Garen de Demacia",
+      email: "garen@demacia.lol",
+      age: 28,
+      profileImageUrl:
+        "https://cdn.lolalytics.com/generated/champion280px/garen.jpg",
+    });
+  }
+});
 
 function App() {
-  const userEntity = useEntity({
-    api: {},
-    fields: [],
+  const {
+    components: { Table, Modal, Filters, Pagination },
+    actions: { createEntity },
+  } = useEntity({
+    api: {
+      findAll: userDatabase.list,
+      findOne: userDatabase.getOneById,
+      create: userDatabase.create,
+      del: userDatabase.remove,
+      update: userDatabase.update,
+    },
+    fields: [
+      { property: "fullName", type: FieldType.FullName, label: "Full Name" },
+      { type: FieldType.String, property: "email", label: "Email" },
+      { type: FieldType.String, property: "age", label: "Age" },
+    ],
+    filters: [],
     name: "users",
   });
-  console.log(userEntity);
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <div id="entity-container">
+          <div id="actions">
+            <button onClick={createEntity}>Create user</button>
+          </div>
+          <div className="filters">
+            <Filters />
+          </div>
+          <div className="clearfix" />
+          <Table />
+          <Pagination />
+          <Modal />
+        </div>
       </header>
     </div>
   );
 }
 
-export default App;
-// export default withEntityContext()(App);
+export default withEntityContext()(App);

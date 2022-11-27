@@ -5,7 +5,7 @@
   "license": "ISC",
   "scripts": {
     "build": "node ./esbuild.mjs",
-    "start": "WATCH=1 pnpm build --watch",
+    "start": "WATCH=1 pnpm build",
     "postinstall": "pnpm build"
   },
   "devDependencies": {
