@@ -59,3 +59,31 @@ table {
     background-color: rgba(255, 255, 255, .2)
   }
 }
+
+.filters {
+  float: left;
+  text-align: right;
+
+  .filter {
+    margin: 0rem 0.5rem;
+  }
+}
+
+#input-search {
+  background: transparent;
+  color: white;
+  border: none;
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+.actions {
+  float: left;
+}
+
+.clearfix {
+  clear:both
+}

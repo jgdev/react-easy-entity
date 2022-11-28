@@ -11,6 +11,11 @@ export type EntityField<T> = {
   defaultValue?: any;
 };
 
+export type EntityFilter = {
+  type: FilterType;
+  props?: any;
+};
+
 export type EntityTableProps = React.HTMLAttributes<HTMLTableElement> & {
   onRowClick?: (
     entity: any,
@@ -23,7 +28,7 @@ export type EntityTableProps = React.HTMLAttributes<HTMLTableElement> & {
 export type EntityOptions<T> = {
   name: string;
   fields: EntityField<T>[];
-  filters?: any;
+  filters?: EntityFilter[];
   table?: EntityTableProps;
   api: Partial<{
     create: (data: any) => Promise<T>;

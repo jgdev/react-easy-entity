@@ -1,4 +1,9 @@
-import { useEntity, withEntityContext, FieldType } from "react-easy-entity";
+import {
+  useEntity,
+  withEntityContext,
+  FieldType,
+  FilterType,
+} from "react-easy-entity";
 
 import { getDatabase } from "./database";
 import logo from "./logo.svg";
@@ -10,7 +15,7 @@ userDatabase.list().then((data) => {
   if (!data.length) {
     userDatabase.create({
       fullName: "Joan Peralta",
-      email: "joanperalta13@gmail.com",
+      email: "joan@test.com",
       age: 26,
       profileImageUrl: "https://avatars.githubusercontent.com/u/3039328",
     });
@@ -41,7 +46,15 @@ function App() {
       { type: FieldType.String, property: "email", label: "Email" },
       { type: FieldType.String, property: "age", label: "Age" },
     ],
-    filters: [],
+    filters: [
+      {
+        type: FilterType.Search,
+        props: {
+          id: "input-search",
+          placeholder: "Search",
+        },
+      },
+    ],
     name: "users",
   });
   return (
@@ -49,7 +62,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <div id="entity-container">
-          <div id="actions">
+          <div className="actions">
             <button onClick={createEntity}>Create user</button>
           </div>
           <div className="filters">

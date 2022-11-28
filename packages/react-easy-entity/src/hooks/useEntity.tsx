@@ -3,6 +3,7 @@ import debug from "debug";
 
 import { useEntityManagerContext } from "./useEntityManagerContext";
 import Table from "../components/Table";
+import Filters from "../components/Filters";
 import { EntityOptions } from "../";
 
 const log = debug("hook:useEntity");
@@ -31,7 +32,10 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
         {...entityManager.table}
       />
     )) || <></>;
-  const Filters = () => (entityManager && <div id="filters" />) || <></>;
+  const mFilters = () =>
+    (entityManager && (
+      <Filters filters={entityOptions.filters} name={entityOptions.name} />
+    )) || <></>;
   const Pagination = () => (entityManager && <div id="pagination" />) || <></>;
   const Modal = () => (entityManager && <div id="modal" />) || <></>;
 
@@ -53,7 +57,7 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
     components: {
       Container,
       Table: mTable,
-      Filters,
+      Filters: mFilters,
       Pagination,
       Modal,
     },
