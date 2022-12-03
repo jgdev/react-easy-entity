@@ -12,6 +12,7 @@ export type EntityField<T> = {
 };
 
 export type EntityFilter = {
+  name: string;
   type: FilterType;
   props?: any;
 };
@@ -49,12 +50,12 @@ export enum FieldType {
 }
 
 export enum FilterType {
-  Search,
-  Select,
-  Custom,
+  Search = "search",
+  Select = "select",
+  Custom = "custom",
 }
 
 export { default as Table } from "./components/Table";
 export { default as TableRow } from "./components/TableRow";
 export { useEntity } from "./hooks/useEntity";
-export { withEntityContext } from "./context/entityManager";
+export { EntityProvider } from "./context/entityManager";

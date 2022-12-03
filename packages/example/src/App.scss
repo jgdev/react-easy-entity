@@ -60,18 +60,11 @@ table {
   }
 }
 
-.filters {
-  float: left;
-  text-align: right;
-
-  .filter {
-    margin: 0rem 0.5rem;
-  }
-}
-
 #input-search {
-  background: transparent;
+  padding: 1rem;
+  margin-bottom: 1rem;  
   color: white;
+  background: rgba(0, 0, 0, .5);
   border: none;
 
   &:focus,

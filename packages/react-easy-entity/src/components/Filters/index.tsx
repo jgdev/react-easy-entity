@@ -14,17 +14,21 @@ const filtersByType: {
   [FilterType.Search]: (props: any) => <InputSearch {...props} />,
 };
 
+export const renderFilter =
+  (entityName: string, props: any = {}) =>
+  (filter: EntityFilter) => {
+    const FilterComponent = filtersByType[filter.type] || <></>;
+    return (
+      <div
+        key={`${entityName}-${filter.type}`}
+        className={`filter-${entityName}-${filter.type}`}
+        {...props}
+      >
+        <FilterComponent {...(filter.props || {})} />
+      </div>
+    );
+  };
+
 export default ({ filters = [], name }: FilterProps) => {
-  return (
-    <>
-      {filters.map((filter) => {
-        const FilterComponent = filtersByType[filter.type] || <></>;
-        return (
-          <div key={`${name}-${filter.type}`} className="filter">
-            <FilterComponent {...(filter.props || {})} />
-          </div>
-        );
-      })}
-    </>
-  );
+  return <>{filters.map(renderFilter(name))}</>;
 };

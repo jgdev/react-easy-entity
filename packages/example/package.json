@@ -10,7 +10,6 @@
     "@types/node": "^16.18.3",
     "react-easy-entity": "link:../react-easy-entity",
     "react-scripts": "5.0.1",
-    "sass": "^1.56.1",
     "styled-components": "^5.3.6",
     "typescript": "^4.9.3",
     "uuid": "^9.0.0",
@@ -23,7 +22,7 @@
     "react-dom": "^18.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -47,6 +46,7 @@
     ]
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "sass": "^1.56.1"
   }
 }

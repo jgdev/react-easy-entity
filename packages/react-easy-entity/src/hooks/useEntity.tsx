@@ -3,24 +3,45 @@ import debug from "debug";
 
 import { useEntityManagerContext } from "./useEntityManagerContext";
 import Table from "../components/Table";
-import Filters from "../components/Filters";
+import Filters, { renderFilter } from "../components/Filters";
 import { EntityOptions } from "../";
 
-const log = debug("hook:useEntity");
+export type FiltersRender = {
+  [key: string]: React.FunctionComponent<React.HTMLAttributes<HTMLDivElement>>;
+};
 
 export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
-  const { registerEntity, getEntity, getEntityRowById } =
-    useEntityManagerContext();
-  const entityManager = getEntity(entityOptions.name);
-  const [state, setState] = useState({
-    modalOpen: false,
-    entity: null,
-  });
+  const log = debug("hook:useEntity:" + entityOptions.name);
+
+  const { addEntity, getEntity, getEntityRowById } = useEntityManagerContext();
 
   useEffect(() => {
-    registerEntity(entityOptions);
+    addEntity(entityOptions);
     log(`registering entity ${entityOptions.name}`);
   }, []);
+
+  const entityManager = getEntity(entityOptions.name);
+
+  const [state, _setState] = useState<any>({
+    modalOpen: false,
+    entity: null,
+    filters: (entityOptions.filters || []).reduce((result, filter) => {
+      return {
+        ...result,
+        [filter.name]: (props: any) =>
+          renderFilter(entityOptions.name, props)(filter),
+      };
+    }, {}),
+  });
+
+  const setState = (newState) => {
+    _setState({
+      ...state,
+      ...newState,
+    });
+  };
+
+  const filters = entityOptions.filters || [];
 
   const Container = (props) =>
     (entityManager && <div id="entity-container" {...props} />) || <></>;
@@ -34,7 +55,7 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
     )) || <></>;
   const mFilters = () =>
     (entityManager && (
-      <Filters filters={entityOptions.filters} name={entityOptions.name} />
+      <Filters filters={filters} name={entityOptions.name} />
     )) || <></>;
   const Pagination = () => (entityManager && <div id="pagination" />) || <></>;
   const Modal = () => (entityManager && <div id="modal" />) || <></>;
@@ -43,21 +64,27 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
 
   return {
     actions: {
-      createEntity: () => setState({ modalOpen: true, entity: null }),
+      createEntity: () => {
+        log("create entity");
+        setState({ modalOpen: true, entity: null });
+      },
       editEntity: ({ id, preFetch = false }) => {
+        log(`edit entity ${id}`);
         const entityById = getEntityRowById(entityOptions.name, id);
-        setState({
-          modalOpen: true,
-          entity:
-            ((preFetch || !entityById) && entityOptions.api.findOne!(id)) ||
-            entityById,
-        });
+        log(`entity ${JSON.stringify(entityById, null, 2)}`);
+        // setState({
+        //   modalOpen: true,
+        //   entity:
+        //     ((preFetch || !entityById) && entityOptions.api.findOne!(id)) ||
+        //     entityById,
+        // });
       },
     },
     components: {
       Container,
       Table: mTable,
       Filters: mFilters,
+      getFilters: (): FiltersRender => state.filters,
       Pagination,
       Modal,
     },

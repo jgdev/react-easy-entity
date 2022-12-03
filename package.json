@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "pnpm --parallel start"
+    "dev": "pnpm --parallel dev",
+    "build": "pnpm --filter react-easy-entity build"
   },
   "keywords": [],
   "author": "",
