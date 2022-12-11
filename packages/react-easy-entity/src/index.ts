@@ -1,4 +1,5 @@
 import React from "react";
+import { EntityObject } from "./context/entityManager";
 
 export type EntityField<T> = {
   label?: string;
@@ -9,6 +10,7 @@ export type EntityField<T> = {
   property: string;
   required?: boolean;
   defaultValue?: any;
+  props?: any;
 };
 
 export type EntityFilter = {
@@ -41,12 +43,25 @@ export type EntityOptions<T> = {
   onError?: (error: any, type?: string) => void;
 };
 
+export type FilterProps = {
+  name: string;
+  filters?: EntityFilter[];
+};
+
+export type FieldProps<T> = {
+  entity: T;
+  name: string;
+  fields?: EntityField<T>[];
+  entityManager: EntityObject<T>;
+  onChangeField: (fieldProperty: string, value: any) => void;
+};
+
 export enum FieldType {
-  Element,
-  FullName,
-  Email,
-  Number,
-  String,
+  Element = "custom-element",
+  FullName = "fullName",
+  Email = "email",
+  Number = "number",
+  String = "string",
 }
 
 export enum FilterType {
@@ -55,7 +70,5 @@ export enum FilterType {
   Custom = "custom",
 }
 
-export { default as Table } from "./components/Table";
-export { default as TableRow } from "./components/TableRow";
 export { useEntity } from "./hooks/useEntity";
 export { EntityProvider } from "./context/entityManager";

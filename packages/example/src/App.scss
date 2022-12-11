@@ -78,5 +78,69 @@ table {
 }
 
 .clearfix {
-  clear:both
+  clear:both;
+}
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  &.modal-backdrop {
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+    background: rgba(0,0,0,.6);
+  }
+
+  .modal-body, .modal-footer, .modal-header {
+    width: 300px;
+    padding: 1rem;
+    background-color: white;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #d1d1d1;
+    border-radius: 5px 5px 0px 0px;
+    font-weight: 600;
+  }
+
+  .modal-footer {
+    border-top: 1px solid #d1d1d1;
+    border-radius: 0px 0px 5px 5px ;
+    button {
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+
+      &.modal-button-save {
+        float: right;
+      }
+    
+      &.modal-button-close {
+        float: left;
+      }
+    }
+  }
+}
+
+.field-container {
+  width: 100%;
+
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.field-input {
+  border: 1px solid #d1d1d1;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem 1rem ;
+  border-radius: 5px;
 }

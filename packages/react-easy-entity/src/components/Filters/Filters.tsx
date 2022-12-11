@@ -1,17 +1,11 @@
 import React from "react";
-import { EntityFilter, FilterType } from "../../";
-import InputSearch from "./InputSearch";
-export { default as InputSearch } from "./InputSearch";
-
-export type FilterProps = {
-  name: string;
-  filters?: EntityFilter[];
-};
+import { EntityFilter, FilterType, FilterProps } from "@root";
+import FilterInputSearch from "./FilterInputSearch";
 
 const filtersByType: {
   [key: string]: any;
 } = {
-  [FilterType.Search]: (props: any) => <InputSearch {...props} />,
+  [FilterType.Search]: (props: any) => <FilterInputSearch {...props} />,
 };
 
 export const renderFilter =
