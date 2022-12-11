@@ -24,7 +24,7 @@ import { exec } from "child_process";
             const buildTs = async () => {
               return new Promise((resolve, reject) => {
                 exec(
-                  "rm ./tsconfig.tsbuildinfo && tsc --emitDeclarationOnly --outDir dist",
+                  "rm ./tsconfig.tsbuildinfo || true && tsc --emitDeclarationOnly --outDir dist",
                   (err, stdout, stderr) => {
                     if (err) {
                       console.error(stdout, stderr);

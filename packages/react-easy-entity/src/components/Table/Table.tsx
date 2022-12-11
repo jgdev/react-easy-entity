@@ -1,9 +1,14 @@
-import React from "react";
-import { EntityField, EntityTableProps } from "../../";
+import React, { useEffect } from "react";
+import debug from "debug";
+import { EntityField, EntityTableProps } from "@root";
+
+const log = debug("component:Table");
 
 export type Props = EntityTableProps & {
   rows: any[];
   fields: EntityField<any>[];
+  loading?: boolean;
+  loadingContainer?: React.ReactElement;
 };
 
 export const Table = ({
@@ -12,14 +17,29 @@ export const Table = ({
   onRowClick = () => {},
   fields,
   rows,
+  loading = false,
+  loadingContainer = <>Loading ...</>,
   ...props
 }: Props) => {
+  useEffect(() => {
+    log("render");
+
+    // interval.current = setInterval(() => {
+    //   setCount((count) => count + 1);
+    // }, 1000);
+
+    // return () => {
+    //   clearInterval(interval.current);
+    // };
+  }, []);
+
   const renderHead = () =>
     fields.map((field) => (
       <th {...tableHeaderProps} key={field.property}>
         {field.label}
       </th>
     ));
+
   const renderRows = () => {
     return rows.map((entity: any) => {
       const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
@@ -41,13 +61,18 @@ export const Table = ({
       );
     });
   };
-  return (
-    <table {...props}>
-      <thead>
-        <tr>{renderHead()}</tr>
-      </thead>
-      <tbody>{renderRows()}</tbody>
-    </table>
+
+  return loading ? (
+    <>{loadingContainer}</>
+  ) : (
+    <>
+      <table {...props}>
+        <thead>
+          <tr>{renderHead()}</tr>
+        </thead>
+        <tbody>{renderRows()}</tbody>
+      </table>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useEntity, FieldType, FilterType } from "react-easy-entity";
 
+import debug from "debug";
 import { getDatabase } from "./database";
 import logo from "./logo.svg";
 import "./App.scss";
@@ -25,9 +26,19 @@ userDatabase.list().then((data) => {
   }
 });
 
+const log = debug("component:App");
+
 export const App = () => {
+  useEffect(() => {
+    log("render");
+  }, []);
+
   const {
-    components: { Table, Modal, Pagination, getFilters },
+    components: {
+      Table,
+      Modal,
+      filters: { userSearch: FilterUserSearch = <></> },
+    },
     actions: { createEntity, editEntity },
   } = useEntity({
     api: {
@@ -38,7 +49,7 @@ export const App = () => {
       update: userDatabase.update,
     },
     table: {
-      onRowClick: (e) => editEntity(e),
+      onRowClick: (entity, event) => editEntity(entity, event),
       tableRowProps: {
         style: {
           cursor: "pointer",
@@ -46,9 +57,31 @@ export const App = () => {
       },
     },
     fields: [
-      { property: "fullName", type: FieldType.FullName, label: "Full Name" },
-      { type: FieldType.String, property: "email", label: "Email" },
-      { type: FieldType.String, property: "age", label: "Age" },
+      {
+        property: "fullName",
+        type: FieldType.FullName,
+        label: "Full Name",
+        props: {
+          required: true,
+        },
+      },
+      {
+        type: FieldType.String,
+        property: "email",
+        label: "Email",
+        props: {
+          required: true,
+          type: "email",
+        },
+      },
+      {
+        type: FieldType.String,
+        property: "age",
+        label: "Age",
+        props: {
+          required: true,
+        },
+      },
     ],
     filters: [
       {
@@ -64,24 +97,23 @@ export const App = () => {
     name: "users",
   });
 
-  const { userSearch: FilterUserSearch } = getFilters();
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <FilterUserSearch />
-        <div id="entity-container">
-          <div className="actions">
-            <button onClick={createEntity}>Create user</button>
+    <>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          {FilterUserSearch}
+          <div id="entity-container">
+            <div className="actions">
+              <button onClick={createEntity}>Create user</button>
+            </div>
+            <div className="clearfix" />
+            {Table}
           </div>
-          <div className="clearfix" />
-          <Table />
-          <Pagination />
-          <Modal />
-        </div>
-      </header>
-    </div>
+        </header>
+      </div>
+      {Modal}
+    </>
   );
 };
 

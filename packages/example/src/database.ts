@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 
-const delay = (n = 1500) =>
+const delay = (n = 0) =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(null);
@@ -29,7 +29,10 @@ export const getDatabase = (entity: string) => {
       saveData(newData);
       return toCreate;
     },
-    list: async () => getData(),
+    list: async () => {
+      await delay();
+      return getData();
+    },
     update: async (id: string, row: any) => {
       await delay();
       const data = getData();
