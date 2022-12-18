@@ -15,9 +15,18 @@ export type State<T> = {
 };
 
 export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
+  useEffect(() => {
+    log("Render useEntity");
+  }, []);
   const log = debug("hook:useEntity:" + entityOptions.name);
   const formRef = useRef<HTMLFormElement>(null);
-  const { addEntity, addEntityRow, updateEntityRow, getEntity, getEntityRowById } = useEntityManagerContext();
+  const {
+    addEntity,
+    addEntityRow,
+    updateEntityRow,
+    getEntity,
+    getEntityRowById,
+  } = useEntityManagerContext();
   const [state, _setState] = useState<State<T>>({
     modalOpen: false,
     entity: null,
@@ -47,15 +56,26 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
 
   const onCloseModal = () => setState({ entity: null, modalOpen: false });
 
-  const onFormSubmit = (e: any) => {
+  const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (state.entity?.id) {
-      log(`Update entity ${JSON.stringify(state.entity, null, 2)}`);
-      updateEntityRow(entityOptions.name, state.entity.id, state.entity);
-      return;
-    }
-    log(`Create entity ${JSON.stringify(state.entity, null, 2)}`);
-    addEntityRow(entityOptions.name, state.entity);
+    const fn = (): Promise<any> =>
+      state.entity?.id
+        ? updateEntityRow(entityOptions.name, state.entity.id, state.entity)
+        : addEntityRow(entityOptions.name, state.entity);
+
+    fn()
+      .then((result) => {
+        console.log("result", result);
+      })
+      .catch((err) => {
+        console.error("err from submit", err);
+      })
+      .finally(() => {
+        setState({
+          modalOpen: false,
+          entity: null,
+        });
+      });
   };
 
   const entityManager = getEntity(entityOptions.name);
@@ -64,18 +84,22 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
 
   const Pagination = () => (entityManager && <div id="pagination" />) || <></>;
 
+  const loadingModal = entityManager?.loading.includes('create') || entityManager?.loading.includes(state.entity?.id)
+
   return {
     actions: {
       createEntity: () => {
-        log("create entity");
         setState({
-          entity: null,
+          entity: {
+            fullName: 'Joan Test',
+            email: 'joan@test.test',
+            age: 26
+            },
           modalOpen: true,
         });
       },
       editEntity: ({ id }, _: any) => {
         const entity = getEntityRowById<T>(entityOptions.name, id);
-        log(`edit entity ${JSON.stringify(entity, null, 2)}`);
         setState({
           entity,
           modalOpen: true,
@@ -102,27 +126,32 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
       Pagination,
       Modal: (
         <Modal
+          loading={loadingModal}
           entity={state.entity}
-          onSubmit={() => formRef.current.requestSubmit()}
           onClose={onCloseModal}
           className={classnames(
             `modal ${entityOptions.name}-modal`,
             state.modalOpen && "modal-backdrop"
           )}
           open={state.modalOpen}
+          containerProps={{
+            formRef,
+            onSubmit: onFormSubmit,
+          }}
         >
           {state.modalOpen && (
             <Fields
+              loading={loadingModal}
               formRef={formRef}
-              onSubmit={onFormSubmit}
-              name={entityOptions.name}
+              entityName={entityOptions.name}
               fields={entityOptions.fields}
               entityManager={entityManager}
               entity={state.entity}
               onChangeField={onChangeField}
             />
           )}
-        </Modal>
+        </Modal
+>
       ),
     },
   };

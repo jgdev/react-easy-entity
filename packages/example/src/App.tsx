@@ -95,6 +95,7 @@ export const App = () => {
       },
     ],
     name: "users",
+    onError: err => alert('Captured custom error handler: ' + err.message)
   });
 
   return (

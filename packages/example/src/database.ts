@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 
-const delay = (n = 0) =>
+const delay = (n = 2000) =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(null);

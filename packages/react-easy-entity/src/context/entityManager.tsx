@@ -12,8 +12,12 @@ export type Context = {
   addEntity: (options: EntityOptions<any>) => void;
   getEntity: <T>(entityName: string) => EntityObject<T>;
   getEntityRowById: <T>(entityName: string, rowId: string) => T;
-  addEntityRow: <T>(entityName: string, entity: Partial<T>) => void;
-  updateEntityRow: <T>(entityName: string, entityId: string, entity: Partial<T>) => void;
+  addEntityRow: <T>(entityName: string, entity: Partial<T>) => Promise<T>;
+  updateEntityRow: <T>(
+    entityName: string,
+    entityId: string,
+    entity: Partial<T>
+  ) => Promise<T>;
 };
 
 export const EntityContext = createContext<Context>({} as any);
@@ -31,13 +35,6 @@ const wrapApiMethods = (entity: EntityObject, dispatch: any) => {
       [method]: async (...args: any[]) => {
         log(`calling ${entity.name}.api.${method}`);
 
-        dispatch({
-          type: "loading",
-          entityName: entity.name,
-          loading: "list",
-          value: true,
-        });
-
         return entity.api[method](...args)
           .then((result: any) => {
             log(`finished ${entity.name}.api.${method}`);
@@ -46,7 +43,7 @@ const wrapApiMethods = (entity: EntityObject, dispatch: any) => {
               case "findAll":
                 dispatch({
                   type: "updateRows",
-                  name: entity.name,
+                  entityName: entity.name,
                   data: result,
                 });
                 dispatch({
@@ -68,6 +65,12 @@ const wrapApiMethods = (entity: EntityObject, dispatch: any) => {
   }, {} as any);
 };
 
+const setLoadingValue = (
+  entityName: string,
+  loading: string,
+  value: boolean
+) => {};
+
 export type Props = {
   children: any;
 };
@@ -80,6 +83,8 @@ export enum Actions {
   AddEntity = "addEntity",
   UpdateRows = "updateRows",
   Loading = "loading",
+  UpdateEntityRow = "updateEntityRow",
+  AddEntityRow = "addEntityRow",
 }
 
 export type Action = {
@@ -93,12 +98,15 @@ export class EntityProvider extends React.Component<Props> {
   };
 
   dispatch(action: Action) {
-    this.setState((prevState: State) => this.reducer(prevState, action));
+    log(`dispatch ${JSON.stringify(action, null, 2)}`);
+    this.setState(this.reducer(this.state, action));
   }
 
   reducer(prevState: State, action: Action): State {
-    let entities: EntityObject[];
-    let entityIndex: number;
+    const entities: EntityObject[] = prevState.entities;
+    const entityIndex: number = entities.findIndex(
+      (e) => e.name === action.entityName
+    );
 
     switch (action.type) {
       case Actions.AddEntity:
@@ -107,8 +115,6 @@ export class EntityProvider extends React.Component<Props> {
           entities: prevState.entities.concat(action.entity),
         };
       case Actions.UpdateRows:
-        entities = prevState.entities;
-        entityIndex = entities.findIndex((e) => e.name === action.name);
         if (entityIndex > -1) {
           entities[entityIndex].data = [...action.data];
         }
@@ -117,11 +123,6 @@ export class EntityProvider extends React.Component<Props> {
           entities,
         };
       case Actions.Loading:
-        entities = prevState.entities;
-        entityIndex = prevState.entities.findIndex(
-          (e) => e.name === action.entityName
-        );
-
         if (entityIndex > -1) {
           const isLoading =
             entities[entityIndex].loading.indexOf(action.loading) > -1;
@@ -139,9 +140,27 @@ export class EntityProvider extends React.Component<Props> {
           ...prevState,
           entities,
         };
+      case Actions.UpdateEntityRow:
+        const rowIndex = entities[entityIndex].data.findIndex(
+          (row) => row.id === action.rowId
+        );
+        if (rowIndex < 0) return prevState;
+        entities[entityIndex].data[rowIndex] = {
+          ...entities[entityIndex].data[rowIndex],
+          ...action.data,
+        };
+        return {
+          ...prevState,
+          entities,
+        };
+      case Actions.AddEntityRow:
+        entities[entityIndex].data = entities[entityIndex].data.concat(action.data);
+        return {
+          ...prevState,
+          entities,
+        };
       default:
-        console.error(`Unhandled action "${action.type}"`);
-        return prevState;
+        throw new Error(`Unhandled action "${action.type}"`);
     }
   }
 
@@ -168,12 +187,61 @@ export class EntityProvider extends React.Component<Props> {
     return this.getEntity(entityName)?.data.find((row) => row.id === rowId);
   }
 
-  addEntityRow(entityName: string, entity: any) {
-
+  async addEntityRow(entityName: string, data: any) {
+    const entity = this.getEntity(entityName);
+    this.dispatch({
+      type: Actions.Loading,
+      loading: 'create',
+      entityName,
+      value: true,
+    });
+    try {
+      const result = await entity.api.create(data);
+      this.dispatch({
+        type: Actions.AddEntityRow,
+        entityName,
+        data: result,
+      })
+    } catch (err) {
+      entity.onError && entity.onError(err)
+    } finally {
+      this.dispatch({
+        type: Actions.Loading,
+        loading: 'create',
+        entityName,
+        value: false,
+      });
+    }
   }
 
-  updateEntityRow(entityName: string, rowId: string, entity: any) {
+  async updateEntityRow(entityName: string, rowId: string, data: any) {
+    const entity = this.getEntity(entityName);
 
+    this.dispatch({
+      type: Actions.Loading,
+      loading: rowId,
+      entityName,
+      value: true,
+    });
+
+    try {
+      const result = await entity.api.update(rowId, data);
+      this.dispatch({
+        type: Actions.UpdateEntityRow,
+        entityName,
+        rowId,
+        data: result,
+      });
+    } catch (err) {
+      entity.onError && entity.onError(err)
+    } finally {
+      this.dispatch({
+        type: Actions.Loading,
+        loading: rowId,
+        entityName,
+        value: false,
+      });
+    }
   }
 
   componentDidMount(): void {

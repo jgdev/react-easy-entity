@@ -23,14 +23,6 @@ export const Table = ({
 }: Props) => {
   useEffect(() => {
     log("render");
-
-    // interval.current = setInterval(() => {
-    //   setCount((count) => count + 1);
-    // }, 1000);
-
-    // return () => {
-    //   clearInterval(interval.current);
-    // };
   }, []);
 
   const renderHead = () =>

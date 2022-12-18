@@ -13,49 +13,42 @@ const fieldsByType: {
 };
 
 export const renderField =
-  (
+  (params: {
     entityName: string,
     entityManager: EntityObject,
     entity: any,
-    onChangeField: (property: string, value: any) => void = () => {}
-  ) =>
+    onChangeField: (property: string, value: any) => void,
+    loading?: boolean
+  }) =>
   ({ props, ...field }: EntityField<any>) => {
     const FieldComponent = fieldsByType[field.type] || <></>;
     return (
       <div
-        key={`${entityName}-${field.type}-${field.property}`}
-        className={`field-container field-${entityName}-${field.type}-${field.property}`}
+        key={`${params.entityName}-${field.type}-${field.property}`}
+        className={`field-container field-${params.entityName}-${field.type}-${field.property}`}
       >
         <FieldComponent
           {...(props || {})}
-          entityManager={entityManager}
+          entityManager={params.entityManager}
           field={field}
-          entity={entity}
-          onChange={(e: any) => onChangeField(field.property, e.target.value)}
+          entity={params.entity}
+          loading={params.loading}
+          onChange={(e: any) => params.onChangeField(field.property, e.target.value)}
         />
       </div>
     );
   };
 
-export default ({
-  fields = [],
-  name,
-  entityManager,
-  entity = {},
-  onChangeField,
-  onSubmit,
-  formRef,
-}: FieldProps<any> & {
-  onSubmit: (e: any) => void;
-  formRef?: React.RefObject<HTMLFormElement>;
+export default (props: FieldProps<any> & {
+  formRef: React.RefObject<HTMLFormElement>;
+  loading?: boolean;
 }) => {
   useEffect(() => {
-    formRef?.current.querySelector("input").focus();
+    props.formRef.current?.querySelector("input")?.focus();
   }, []);
-
   return (
-    <form onSubmit={onSubmit} ref={formRef}>
-      {fields.map(renderField(name, entityManager, entity, onChangeField))}
-    </form>
+    <>
+      {props.fields.map(renderField(props))}
+    </>
   );
 };

@@ -50,7 +50,7 @@ export type FilterProps = {
 
 export type FieldProps<T> = {
   entity: T;
-  name: string;
+  entityName: string;
   fields?: EntityField<T>[];
   entityManager: EntityObject<T>;
   onChangeField: (fieldProperty: string, value: any) => void;
