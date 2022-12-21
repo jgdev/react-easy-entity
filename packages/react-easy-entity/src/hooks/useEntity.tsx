@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import classnames from "classnames";
 import debug from "debug";
 
-import { useEntityManagerContext } from "./useEntityManagerContext";
+import { EntityContext } from "@context/EntityContext";
 import Table, { Props as TableProps } from "@components/Table";
 import Modal from "@components/Modal";
 import Filters, { renderFilter } from "@components/Filters";
@@ -26,7 +26,7 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
     updateEntityRow,
     getEntity,
     getEntityRowById,
-  } = useEntityManagerContext();
+  } = useContext(EntityContext);
   const [state, _setState] = useState<State<T>>({
     modalOpen: false,
     entity: null,
@@ -84,17 +84,19 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
 
   const Pagination = () => (entityManager && <div id="pagination" />) || <></>;
 
-  const loadingModal = entityManager?.loading.includes('create') || entityManager?.loading.includes(state.entity?.id)
+  const loadingModal =
+    entityManager?.loading.includes("create") ||
+    entityManager?.loading.includes(state.entity?.id);
 
   return {
     actions: {
       createEntity: () => {
         setState({
           entity: {
-            fullName: 'Joan Test',
-            email: 'joan@test.test',
-            age: 26
-            },
+            fullName: "Joan Test",
+            email: "joan@test.test",
+            age: 26,
+          },
           modalOpen: true,
         });
       },
@@ -110,7 +112,7 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
       Table: (
         <Table
           loading={entityManager?.loading.includes("list") || false}
-          rows={entityManager?.data || []}
+          rows={entityManager?.rows || []}
           fields={entityManager?.fields || []}
           {...(entityManager?.table || {})}
         />
@@ -150,8 +152,7 @@ export const useEntity = <T extends {}>(entityOptions: EntityOptions<T>) => {
               onChangeField={onChangeField}
             />
           )}
-        </Modal
->
+        </Modal>
       ),
     },
   };

@@ -1,13 +1,12 @@
 import React from "react";
-import { EntityObject } from "@context/entityManager";
-import { EntityField } from "@root";
+import { EntityObject, EntityField } from "@root";
 
 export type FieldInputProps = React.InsHTMLAttributes<HTMLInputElement> & {
   entityManager: EntityObject;
   entity: any;
   field: EntityField<any>;
-  loading?: boolean
-  disabled?: boolean
+  loading?: boolean;
+  disabled?: boolean;
 };
 
 export const FieldInput = ({

@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@ngneat/falso': ^6.3.2
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
   '@testing-library/user-event': ^13.5.0
@@ -16,6 +17,7 @@ specifiers:
   web-vitals: ^2.1.4
 
 dependencies:
+  '@ngneat/falso': 6.3.2
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 13.4.0
   '@testing-library/user-event': 13.5.0
@@ -1948,6 +1950,13 @@ packages:
 
   /@leichtgewicht/ip-codec/2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
+    dev: false
+
+  /@ngneat/falso/6.3.2:
+    resolution: {integrity: sha512-JMNuFcSvlzfjTTFnmwO45GC1NllUf83KaxECcpQPbDewjjkiRjGyvv8ilB6bc4cvQd7smjNMMy+dRzMlyM59ug==}
+    dependencies:
+      seedrandom: 3.0.5
+      uuid: 8.3.2
     dev: false
 
   /@nicolo-ribaudo/eslint-scope-5-internals/5.1.1-v1:
@@ -8675,6 +8684,10 @@ packages:
       ajv: 8.11.2
       ajv-formats: 2.1.1
       ajv-keywords: 5.1.0_ajv@8.11.2
+    dev: false
+
+  /seedrandom/3.0.5:
+    resolution: {integrity: sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==}
     dev: false
 
   /select-hose/2.0.0:

@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "references": [{ "path": "../react-easy-entity" }],
+  "references": [{ "path": "../react-easy-entity",  }, { "path": "../react-easy-entity-antd" }],
   "include": ["src"],
   "exclude": ["**/*.test.tsx"]
 }

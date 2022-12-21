@@ -1,5 +1,7 @@
 import React from "react";
-import { EntityObject } from "./context/entityManager";
+import { EntityObject } from "./context/EntityContext";
+
+export type StyleAdapter = {};
 
 export type EntityField<T> = {
   label?: string;
@@ -28,6 +30,13 @@ export type EntityTableProps = React.HTMLAttributes<HTMLTableElement> & {
   tableHeaderProps?: React.HTMLAttributes<HTMLTableHeaderCellElement>;
 };
 
+export type SearchParams<T> = {
+  from: number;
+  limit: number;
+  rows: T[];
+  totalRows: number;
+};
+
 export type EntityOptions<T> = {
   name: string;
   fields: EntityField<T>[];
@@ -37,11 +46,16 @@ export type EntityOptions<T> = {
     create: (data: any) => Promise<T>;
     update: (id: any, data: any) => Promise<T>;
     del: (id: any) => Promise<void>;
-    findAll: () => Promise<T[]>;
+    findAll: () => Promise<SearchParams<T>>;
     findOne: (id: any) => Promise<T>;
   }>;
   onError?: (error: any, type?: string) => void;
 };
+
+export type EntityObject<T = any> = EntityOptions<T> &
+  SearchParams<T> & {
+    loading: string[];
+  };
 
 export type FilterProps = {
   name: string;
@@ -71,4 +85,4 @@ export enum FilterType {
 }
 
 export { useEntity } from "./hooks/useEntity";
-export { EntityProvider } from "./context/entityManager";
+export { EntityProvider } from "./context/EntityContext";

@@ -29,9 +29,16 @@ export const getDatabase = (entity: string) => {
       saveData(newData);
       return toCreate;
     },
-    list: async () => {
+    list: async (params?: { from?: number; limit?: number }) => {
+      const { from = 0, limit = 10 } = params || {};
       await delay();
-      return getData();
+      const data = getData();
+      return {
+        rows: data.slice(from, from + limit),
+        totalRows: data.length,
+        from,
+        limit,
+      };
     },
     update: async (id: string, row: any) => {
       await delay();

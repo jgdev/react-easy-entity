@@ -1,11 +1,10 @@
-
 import ReactDOM from "react-dom/client";
 import { EntityProvider } from "react-easy-entity";
 import debug from "debug";
 
 import "./index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import { createCustomStyleAdapter } from "./styleAdapter";
 
 debug.enable("*");
 
@@ -14,9 +13,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <EntityProvider>
+  <EntityProvider styleAdapter={createCustomStyleAdapter()}>
     <App />
   </EntityProvider>
 );
-
-reportWebVitals();

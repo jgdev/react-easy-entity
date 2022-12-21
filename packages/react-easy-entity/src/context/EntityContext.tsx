@@ -1,12 +1,7 @@
 import React, { createContext } from "react";
 import debug from "debug";
 
-import { EntityOptions } from "@root";
-
-export type EntityObject<T = any> = EntityOptions<T> & {
-  data: any[];
-  loading: string[];
-};
+import { StyleAdapter, EntityOptions, EntityObject, SearchParams } from "@root";
 
 export type Context = {
   addEntity: (options: EntityOptions<any>) => void;
@@ -42,12 +37,12 @@ const wrapApiMethods = (entity: EntityObject, dispatch: any) => {
             switch (method) {
               case "findAll":
                 dispatch({
-                  type: "updateRows",
+                  type: Actions.UpdateRows,
                   entityName: entity.name,
                   data: result,
                 });
                 dispatch({
-                  type: "loading",
+                  type: Actions.Loading,
                   entityName: entity.name,
                   loading: "list",
                   value: false,
@@ -65,14 +60,9 @@ const wrapApiMethods = (entity: EntityObject, dispatch: any) => {
   }, {} as any);
 };
 
-const setLoadingValue = (
-  entityName: string,
-  loading: string,
-  value: boolean
-) => {};
-
 export type Props = {
   children: any;
+  styleAdapter: StyleAdapter;
 };
 
 export type State = {
@@ -116,7 +106,10 @@ export class EntityProvider extends React.Component<Props> {
         };
       case Actions.UpdateRows:
         if (entityIndex > -1) {
-          entities[entityIndex].data = [...action.data];
+          entities[entityIndex] = {
+            ...entities[entityIndex],
+            ...action.data,
+          };
         }
         return {
           ...prevState,
@@ -141,12 +134,12 @@ export class EntityProvider extends React.Component<Props> {
           entities,
         };
       case Actions.UpdateEntityRow:
-        const rowIndex = entities[entityIndex].data.findIndex(
+        const rowIndex = entities[entityIndex].rows.findIndex(
           (row) => row.id === action.rowId
         );
         if (rowIndex < 0) return prevState;
-        entities[entityIndex].data[rowIndex] = {
-          ...entities[entityIndex].data[rowIndex],
+        entities[entityIndex].rows[rowIndex] = {
+          ...entities[entityIndex].rows[rowIndex],
           ...action.data,
         };
         return {
@@ -154,7 +147,9 @@ export class EntityProvider extends React.Component<Props> {
           entities,
         };
       case Actions.AddEntityRow:
-        entities[entityIndex].data = entities[entityIndex].data.concat(action.data);
+        entities[entityIndex].rows = entities[entityIndex].rows.concat(
+          action.data
+        );
         return {
           ...prevState,
           entities,
@@ -184,14 +179,14 @@ export class EntityProvider extends React.Component<Props> {
   }
 
   getEntityRowById(entityName: string, rowId: string) {
-    return this.getEntity(entityName)?.data.find((row) => row.id === rowId);
+    return this.getEntity(entityName)?.rows.find((row) => row.id === rowId);
   }
 
   async addEntityRow(entityName: string, data: any) {
     const entity = this.getEntity(entityName);
     this.dispatch({
       type: Actions.Loading,
-      loading: 'create',
+      loading: "create",
       entityName,
       value: true,
     });
@@ -201,13 +196,13 @@ export class EntityProvider extends React.Component<Props> {
         type: Actions.AddEntityRow,
         entityName,
         data: result,
-      })
+      });
     } catch (err) {
-      entity.onError && entity.onError(err)
+      entity.onError && entity.onError(err);
     } finally {
       this.dispatch({
         type: Actions.Loading,
-        loading: 'create',
+        loading: "create",
         entityName,
         value: false,
       });
@@ -233,7 +228,7 @@ export class EntityProvider extends React.Component<Props> {
         data: result,
       });
     } catch (err) {
-      entity.onError && entity.onError(err)
+      entity.onError && entity.onError(err);
     } finally {
       this.dispatch({
         type: Actions.Loading,
@@ -246,6 +241,7 @@ export class EntityProvider extends React.Component<Props> {
 
   componentDidMount(): void {
     log("Render context");
+    console.log(this.props.styleAdapter);
   }
 
   render() {

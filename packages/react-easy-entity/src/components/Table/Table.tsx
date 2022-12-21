@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import debug from "debug";
 import { EntityField, EntityTableProps } from "@root";
+import TableRow from "./TableRow";
 
 const log = debug("component:Table");
 
@@ -39,16 +40,16 @@ export const Table = ({
         if (e.isDefaultPrevented() || e.isPropagationStopped()) return;
         onRowClick(entity, e);
       };
+
       return (
-        <tr {...tableRowProps} key={entity.id} onClick={handleClick}>
-          {fields.map((field) => {
-            return (
-              <td key={`${entity.id}-${field.property}`}>
-                {(field.render && field.render(entity)) ||
-                  entity[field.property]}
-              </td>
-            );
-          })}
+        <tr key={entity.id} onClick={handleClick}>
+          {fields.map((field) => (
+            <TableRow
+              key={`${entity.id}-${field.property}`}
+              field={field}
+              entity={entity}
+            />
+          ))}
         </tr>
       );
     });

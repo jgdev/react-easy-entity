@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { randFullName, randEmail, randNumber, randAvatar } from "@ngneat/falso";
 import { useEntity, FieldType, FilterType } from "react-easy-entity";
 
 import debug from "debug";
@@ -8,20 +9,18 @@ import "./App.scss";
 
 const userDatabase = getDatabase("user");
 
-userDatabase.list().then((data) => {
-  if (!data.length) {
-    userDatabase.create({
-      fullName: "Joan Peralta",
-      email: "joan@test.com",
-      age: 26,
-      profileImageUrl: "https://avatars.githubusercontent.com/u/3039328",
-    });
-    userDatabase.create({
-      fullName: "Garen de Demacia",
-      email: "garen@demacia.lol",
-      age: 28,
-      profileImageUrl:
-        "https://cdn.lolalytics.com/generated/champion280px/garen.jpg",
+userDatabase.list().then(({ rows }) => {
+  if (!rows.length) {
+    new Array(150).fill(null).map(() => {
+      const [firstName, lastName] = randFullName({ withAccents: false }).split(
+        " "
+      );
+      userDatabase.create({
+        fullName: `${firstName} ${lastName}`,
+        email: randEmail({ firstName, lastName }),
+        age: randNumber({ min: 18, max: 85 }),
+        profileImageUrl: randAvatar(),
+      });
     });
   }
 });
@@ -95,7 +94,7 @@ export const App = () => {
       },
     ],
     name: "users",
-    onError: err => alert('Captured custom error handler: ' + err.message)
+    onError: (err) => alert("Captured custom error handler: " + err.message),
   });
 
   return (
